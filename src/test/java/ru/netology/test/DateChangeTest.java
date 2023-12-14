@@ -1,4 +1,5 @@
-package ru.netology;
+package ru.netology.test;
+
 import ru.netology.data.DataGenerator;
 
 import com.codeborne.selenide.Condition;
@@ -8,18 +9,14 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
-import static ru.netology.data.DataGenerator.*;
+import static ru.netology.data.DataGenerator.Registration.generateUser;
 
 public class DateChangeTest {
-
-    private String locale;
 
     @BeforeEach
     void setup() {
@@ -29,7 +26,7 @@ public class DateChangeTest {
     @Test
     @DisplayName("Should successful plan and replan meeting")
     void successfulCompletionOfTheCardDeliveryOrderForm() {
-        var validUser = DataGenerator.Registration.generateUser("ru");
+        var validUser = generateUser("ru");
         var daysToAddForFirstMeeting = 4;
         var firstMeetingDate = DataGenerator.generateDate(daysToAddForFirstMeeting);
         var daysToAddForSecondMeeting = 7;
@@ -39,13 +36,11 @@ public class DateChangeTest {
         // firstMeetingDate и secondMeetingDate. Можно также вызывать методы generateCity(locale),
         // generateName(locale), generatePhone(locale) для генерации и получения в тесте соответственно города,
         // имени и номера телефона без создания пользователя в методе generateUser(String locale) в датагенераторе
-        DataGenerator.UserInfo validUser1 = validUser;
-        $("[data-test-id='city'] input").setValue(String.valueOf(validUser1));
-        //Stringtring planningDate = generateDate(3, "dd.MM.yyyy");
+        $("[data-test-id='city'] input").setValue(validUser.getCity());
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
         $("[data-test-id='date'] input").setValue(firstMeetingDate);
-        $("[data-test-id='name'] input").setValue(String.valueOf(validUser1));
-        $("[data-test-id='phone'] input").setValue(String.valueOf(validUser1));
+        $("[data-test-id='name'] input").setValue(String.valueOf(validUser.getName()));
+        $("[data-test-id='phone'] input").setValue(String.valueOf(validUser.getPhone()));
         $("[data-test-id='agreement']").click();
         $("button.button").click();
         $("[data-test-id='success-notification']")
@@ -54,14 +49,13 @@ public class DateChangeTest {
                         " Встреча успешно запланирована на  " + firstMeetingDate));
         $(".icon-button").click();
         $("[data-test-id='city'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
-       // $("[data-test-id='city'] input").setValue("Москва");
-        // String planningNewDate = generateDate(5, "dd.MM.yyyy");
+        $("[data-test-id='city'] input").setValue(validUser.getCity());
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
         $("[data-test-id='date'] input").setValue(secondMeetingDate);
         $("[data-test-id='name'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
-      //  $("[data-test-id='name'] input").setValue("Людмила");
+        $("[data-test-id='name'] input").setValue(validUser.getName());
         $("[data-test-id='phone'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
-      //  $("[data-test-id='phone'] input").setValue("+71659976445");
+        $("[data-test-id='phone'] input").setValue(validUser.getPhone());
         $("[data-test-id='agreement']").click();
         $("[data-test-id='agreement']").click();
         $("button.button").click();
@@ -72,10 +66,4 @@ public class DateChangeTest {
                 .shouldHave(Condition.exactText("Успешно! " +
                         " Встреча успешно запланирована на  " + secondMeetingDate));
     }
-
-
 }
-
-
-
-
